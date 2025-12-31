@@ -54,7 +54,7 @@ Hybrid Agentic RAG  /
 1. **Clone the repository**:
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/devgomesai/Hybirid-Agentic-RAG.git
    cd Hybrid Agentic RAG  
    ```
 2. **Install dependencies**:
