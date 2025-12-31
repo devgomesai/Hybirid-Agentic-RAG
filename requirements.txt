@@ -1,0 +1,6 @@
+llama-index
+llama-index-vector-stores-qdrant
+fastembed   
+pydantic-ai-slim[openai]
+ipykernel
+python-dotenv
