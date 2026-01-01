@@ -24,7 +24,7 @@ logger = logging.getLogger("vector_store")
 class VectorDB:
     def __init__(
         self,
-        collection_name: str = "llama2_paper",
+        collection_name: str = "Hybrid_RAG",
         chunk_size: int = 512,
     ) -> None:
         logger.info(f"[bold blue]Initializing VectorDB with collection: {collection_name}[/]", extra={"markup": True})

@@ -38,26 +38,37 @@ class RAGDependencies(BaseModel):
         default=5,
         ge=1,
         le=50,
-        description="Number of top documents to retrieve per query",
+        description=(
+            "Number of top documents selected after dense retrieval "
+            "or reranking for final context injection."
+        ),
     )
-    
-    model_config = ConfigDict(
-        arbitrary_types_allowed=True
+
+    sparse_top_k: int = Field(
+        default=10,
+        ge=1,
+        le=20,
+        description=(
+            "Number of documents retrieved from sparse (keyword-based) "
+            "search to maximize lexical recall before fusion."
+        ),
     )
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
 
 
 model = OpenAIChatModel(
     model_name=os.getenv("LLM_MODEL", "gpt-4o-mini"),
-    provider=OpenAIProvider(
-        api_key=os.getenv("OPENAI_API_KEY")
-    ),
+    provider=OpenAIProvider(api_key=os.getenv("OPENAI_API_KEY")),
 )
 
 agent = Agent[RAGDependencies, str](
     model=model,
     deps_type=RAGDependencies,
-    system_prompt = SYSTEM_PROMPT,
+    system_prompt=SYSTEM_PROMPT,
 )
+
 
 # ------------------------------------------------------------------
 # Tool: Hybrid Search
@@ -76,7 +87,7 @@ async def search_documents(
         query_engine = ctx.deps.index.as_query_engine(
             vector_store_query_mode="hybrid",
             similarity_top_k=ctx.deps.top_k,
-            sparse_top_k=ctx.deps.top_k,
+            sparse_top_k=ctx.deps.sparse_top_k,
         )
 
         response = query_engine.query(query)
@@ -96,11 +107,7 @@ async def search_documents(
             source = metadata.get("file_name", f"Document {i}")
             sources.append(source)
 
-            context_parts.append(
-                f"--- SOURCE {i} ---\n"
-                f"File: {source}\n"
-                f"{text}\n"
-            )
+            context_parts.append(f"--- SOURCE {i} ---\nFile: {source}\n{text}\n")
 
         # Deduplicate sources
         sources = list(dict.fromkeys(sources))
@@ -134,7 +141,6 @@ else:
 index = vector_store.get_index()
 
 app = agent.to_web(
-    deps=RAGDependencies(index=index, top_k=8),
+    deps=RAGDependencies(index=index, top_k=8, sparse_top_k=10),
     instructions="Think carefully about the user's intent, then retrieve context before answering.",
 )
-
