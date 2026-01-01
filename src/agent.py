@@ -119,8 +119,8 @@ async def search_documents(
         return f"ERROR_RETRIEVING_CONTEXT: {e}"
 
 
-ingestion = Ingestion(path="data/")
-documents = ingestion.ingest()
+ingestor = Ingestion(path="data/")
+documents = ingestor.ingest()
 
 vector_store = VectorDB()
 

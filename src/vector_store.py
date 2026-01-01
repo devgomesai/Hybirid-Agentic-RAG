@@ -1,5 +1,3 @@
-# vector_store.py
-
 from __future__ import annotations
 
 import os
@@ -69,7 +67,8 @@ class VectorDB:
             VectorStoreIndex.from_documents(
                 documents,
                 storage_context=storage_context,
-                use_async=True
+                use_async=True,
+                show_progress=True
             )
             
             logger.info("[bold green]Index successfully created![/]", extra={"markup": True})
