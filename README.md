@@ -101,7 +101,7 @@ To run the agent (depending on how you wish to serve it):
    To test the components individually, you can run:
 
    ```bash
-   # Ingestion, Indexing and Web-UI for Tesing
+   # Ingestion, Indexing and Web-UI for Testing
    uvicorn src.agent:app --host 127.0.0.1 --port 7932
    ```
 
